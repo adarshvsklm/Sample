@@ -41,13 +41,15 @@ function SignUpForm() {
   const handleSubmit = () => {
     axios
       .post('http://localhost:8000/signup', { ...form })
-      .then((res) => {
+      .then((res) => 
+      {
+        axios.post('http://localhost:8000/sendMail',{subject:'subject',text:"sample text"})
         navigate('/login')
         console.log(res);
       })
       .catch((err) => {
-        setError(err)
-        console.log(err);
+        setError(err.respone.data.message)
+        console.log(err.respone);
       });
   };
 
@@ -55,7 +57,7 @@ function SignUpForm() {
     setEmailDisable(true);
     axios
       .post('http://localhost:8000/otp', { email: form.email })
-      .then((res) => {})
+      .then((res) => {console.log(res);})
       .catch((err) => {
         console.log(err);
       });

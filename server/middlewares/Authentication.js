@@ -1,6 +1,8 @@
 const { response } = require('express');
 var nodemailer = require('nodemailer');
 const sendMail = require('./sendEmail');
+const bcrypt = require('bcryptjs');
+const User = require('../model')
 const dotenv = require('dotenv');
 dotenv.config();
 
@@ -12,18 +14,20 @@ module.exports = {
       const check = await User.findOne({ email: req.body.email });
     //   if (check) {
     //     res.status(404).json({ message: 'Email Already Registered' });
-    //   }
+    //   }else{
       console.log(req.body);
       const newpassword = await bcrypt.hash(req.body.password, 10);
       await User.create({
         fName: req.body.fName,
         lName: req.body.lName,
-        email: req.body.email,
-        dob: req.body.dob,
+        email: req.body.email,   
+        dob: req.body.dob, 
         password: newpassword,
       });
-      res.json({ status: 200 });
+      res.status(201).json({ message:'Created' })
+    // }
     } catch (err) {
+        console.log(err);
       res.status(500).json({ message: err });
     }
   },
@@ -62,9 +66,8 @@ module.exports = {
         }
         return OTP;
       }
-      req.body.subject = 'Sample';
-      req.body.text = 'sample text';
-      sendMail();
+       
+    //   redirect('/sendMail',{subject:'sample',text:'sample text'});
       res.status(200).json({ message: 'Otp send' });
     } catch (e) {
       res.status(500).json({ message: 'Error' });
